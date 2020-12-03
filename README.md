@@ -1,3 +1,3 @@
-# authentication-microservice
+# express typescript
  
- JWT authentication
+Empty and ready to use express.js application with TypeScript
