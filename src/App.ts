@@ -1,40 +1,44 @@
 import express, { Application } from 'express';
-import IRouter from './routes/IRouter';
+import AbstractRouter from './routers/AbstractRouter';
 import { logger, stream } from './utils/logger';
 import errorMiddleware from './middlewares/errors';
 import morgan from 'morgan';
+import { Server } from 'http';
 
 export default class App {
     public app: Application;
     public port: string | number;
     public env: string;
 
-    constructor(routes: IRouter[]) {
+    constructor(routers: AbstractRouter[]) {
         this.app = express();
         this.port = process.env.PORT || 3000;
         this.env = process.env.NODE_ENV || 'production';
 
         this.initializeMiddlewares();
-        this.initializeRoutes(routes);
+        this.initializeRoutes(routers);
         this.initializeErrorHandling();
     }
 
-    public listen() {
-        this.app.listen(this.port, () => {
-            logger.info(`🚀 App listening on the port ${this.port}`);
+    public listen(): Server {
+        return this.app.listen(this.port, () => {
+            logger.info(`🚀 App listening on port ${this.port}`);
         });
     }
 
-    private initializeRoutes(routes: IRouter[]) {
-        routes.forEach((route) => {
-            this.app.use('/', route.router);
+    private initializeRoutes(routers: AbstractRouter[]) {
+        routers.forEach((router) => {
+            this.app.use('/', router.router);
         });
     }
 
     private initializeMiddlewares() {
+        // 'tiny' is a log format type
         this.app.use(morgan('tiny', { stream }));
+
+        // parsing incoming body data
         this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: true }));
+        this.app.use(express.urlencoded({extended: false}));
       }
 
     private initializeErrorHandling() {

@@ -1,9 +1,10 @@
 import 'dotenv/config';
 import App from './App';
-import IndexRouter from './routes/IndexRouter';
+import IndexRouter from './routers/IndexRouter';
 
-const routes = [new IndexRouter()];
+// init routers
+const routers = [new IndexRouter()];
 
-const app = new App(routes);
+const app = new App(routers);
 
 app.listen();
